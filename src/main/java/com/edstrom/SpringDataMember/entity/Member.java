@@ -1,5 +1,6 @@
 package com.edstrom.SpringDataMember.entity;
 
+import com.edstrom.SpringDataMember.security.AppUser;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -32,16 +33,21 @@ public class Member {
     @Column(nullable = false, unique = true)
     private LocalDate dateOfBirth;
 
-    private Member(){}
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "app_user_id", referencedColumnName = "id", unique = true)
+    private AppUser appUser;
+
+    protected Member(){}
 
     public Member(String firstName, String lastName, Address address,
-                  String email, String phoneNumber, LocalDate dateOfBirth){
+                  String email, String phoneNumber, LocalDate dateOfBirth, AppUser appUser){
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
+        this.appUser = appUser;
     }
 
     public Long getId() {
@@ -98,5 +104,13 @@ public class Member {
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 }

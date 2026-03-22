@@ -48,36 +48,54 @@ public final class MemberMapper {
                 .map(Role::name)
                 .collect(Collectors.toSet());
     }
-
     public static void applyUpdate(Member member, MemberUpdateDto dto,
-                                   BCryptPasswordEncoder passwordEncoder,
+                                   PasswordEncoder passwordEncoder,
                                    AddressRepository addressRepository) {
-       member.setFirstName(dto.firstName());
+
+        member.setFirstName(dto.firstName());
         member.setLastName(dto.lastName());
         member.setEmail(dto.email());
         member.setPhoneNumber(dto.phoneNumber());
         member.setDateOfBirth(dto.dateOfBirth());
 
-        Address address;
-        if (dto.address().id() != null) {
-            address = addressRepository.findById(dto.address().id())
-                    .orElseThrow(() -> new IllegalArgumentException("Address not found"));
-        } else {
-            address = new Address(dto.address().street(), dto.address().postalCode(), dto.address().city());
-            addressRepository.save(address);
-        }
-        member.setAddress(address);
 
-        // Handle user
+        if (dto.address() != null) {
+            Address address;
+            if (dto.address().id() != null) {
+
+                address = addressRepository.findById(dto.address().id())
+                        .orElseThrow(() -> new AddressNotFoundException(dto.address().id()));
+
+
+                address.setStreet(dto.address().street());
+                address.setPostalCode(dto.address().postalCode());
+                address.setCity(dto.address().city());
+
+            } else {
+
+                address = new Address(dto.address().street(),
+                        dto.address().postalCode(),
+                        dto.address().city());
+                addressRepository.save(address);
+            }
+            member.setAddress(address);
+        }
+
         AppUser user = member.getAppUser();
-        user.setUsername(dto.username());
-        user.setPassword(passwordEncoder.encode(dto.password()));
-        user.setRoles(dto.roles().stream().map(Role::valueOf).collect(Collectors.toSet()));
+        if (dto.username() != null && !dto.username().isBlank()) {
+            user.setUsername(dto.username());
+        }
+        if (dto.password() != null && !dto.password().isBlank()) {
+            user.setPassword(passwordEncoder.encode(dto.password()));
+        }
+        if (dto.roles() != null && !dto.roles().isEmpty()) {
+            user.setRoles(dto.roles().stream().map(Role::valueOf).collect(Collectors.toSet()));
+        }
         member.setAppUser(user);
     }
 
     public static Member toEntity(MemberCreateDto dto,
-                                  BCryptPasswordEncoder passwordEncoder,
+                                  PasswordEncoder passwordEncoder,
                                   AddressRepository addressRepository) {
         Address address;
         if (dto.address().id() != null) {
@@ -114,7 +132,7 @@ public final class MemberMapper {
     }
     public static void applyPatch(Member member,
                                   MemberPatchDto dto,
-                                  BCryptPasswordEncoder passwordEncoder,
+                                  PasswordEncoder passwordEncoder,
                                   AddressRepository addressRepository) {
 
         if (dto.firstName() != null) member.setFirstName(dto.firstName());
@@ -123,32 +141,27 @@ public final class MemberMapper {
         if (dto.phoneNumber() != null) member.setPhoneNumber(dto.phoneNumber());
         if (dto.dateOfBirth() != null) member.setDateOfBirth(dto.dateOfBirth());
 
-        if (dto.username() != null) member.getAppUser().setUsername(dto.username());
-        if (dto.password() != null)
-            member.getAppUser().setPassword(passwordEncoder.encode(dto.password()));
-        if (dto.roles() != null) {
-            Set<Role> roles = dto.roles().stream()
-                    .map(Role::valueOf)
-                    .collect(Collectors.toSet());
-            member.getAppUser().setRoles(roles);
+
+        AppUser user = member.getAppUser();
+        if (dto.username() != null) user.setUsername(dto.username());
+        if (dto.password() != null && !dto.password().isBlank())
+            user.setPassword(passwordEncoder.encode(dto.password()));
+        if (dto.roles() != null && !dto.roles().isEmpty()) {
+            user.setRoles(dto.roles().stream().map(Role::valueOf).collect(Collectors.toSet()));
         }
+        member.setAppUser(user);
 
         if (dto.address() != null) {
-            Address address;
-            if (dto.address().id() != null) {
-                // Fetch existing
-                address = addressRepository.findById(dto.address().id())
-                        .orElseThrow(() -> new AddressNotFoundException(dto.address().id()));
-            } else {
-                // Create new
-                address = new Address(dto.address().street(),
-                        dto.address().postalCode(),
-                        dto.address().city());
-                addressRepository.save(address);
-            }
+            Address address = member.getAddress();
+
+            if (dto.address().street() != null) address.setStreet(dto.address().street());
+            if (dto.address().postalCode() != null) address.setPostalCode(dto.address().postalCode());
+            if (dto.address().city() != null) address.setCity(dto.address().city());
+
             member.setAddress(address);
         }
     }
+
 
 
 }

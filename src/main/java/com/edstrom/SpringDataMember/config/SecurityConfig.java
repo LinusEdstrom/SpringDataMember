@@ -31,12 +31,12 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
 
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/mypages/members/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
-                .userDetailsService(userDetailsService)
-                .httpBasic();
-
-        http.headers().frameOptions().disable();
+                .userDetailsService(userDetailsService);
+        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
+        http.httpBasic();
         return http.build();
     }
     @Bean

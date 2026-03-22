@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -19,7 +20,7 @@ public record MemberUpdateDto(
         @Size(max = 20) String phoneNumber,
         LocalDate dateOfBirth,
         @NotBlank @Size(min = 2, max = 100) String username,
-        @NotBlank @Size(min = 8, max = 60) String password,
+        @Nullable @Size(min = 8, max = 60) String password,
         Set<String> roles
 ) {
 }

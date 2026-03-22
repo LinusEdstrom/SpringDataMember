@@ -21,20 +21,21 @@ public class Member {
     private String lastName;
 
     @ManyToOne
-    @JoinColumn(name = "addressId")
+    @JoinColumn(name = "addressId", nullable = false)
     private Address address;
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
 
-    @Column()
+    @Column(length = 20)
     private String phoneNumber;
 
     @Column(nullable = false, unique = true)
     private LocalDate dateOfBirth;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "app_user_id", referencedColumnName = "id", unique = true)
+    @JoinColumn(name = "app_user_id", nullable = false, referencedColumnName = "id",
+            unique = true)
     private AppUser appUser;
 
     protected Member(){}
@@ -113,4 +114,5 @@ public class Member {
     public void setAppUser(AppUser appUser) {
         this.appUser = appUser;
     }
+
 }

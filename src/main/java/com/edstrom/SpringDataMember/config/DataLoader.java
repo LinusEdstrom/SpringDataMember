@@ -23,6 +23,8 @@ public class DataLoader {
     CommandLineRunner loadData() {
         return args -> {
             memberService.createSampleData();
+
+
         };
 
     }

@@ -24,7 +24,7 @@ public class Address {
     @OneToMany(mappedBy = "address")
     private List<Member> members;
 
-    private Address(){}
+    protected Address(){}
 
     public Address(String street, String postalCode, String city){
         this.street = street;

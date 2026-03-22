@@ -30,7 +30,7 @@ public class AppUser {
     @OneToOne(mappedBy = "appUser", fetch = FetchType.LAZY)
     private Member member;
 
-    protected AppUser(){}
+    public AppUser(){}
 
     public AppUser(String username, String password, Set<Role> roles, Member member){
         this.username = username;

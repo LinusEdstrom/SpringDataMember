@@ -7,7 +7,6 @@ import com.edstrom.SpringDataMember.exception.AddressNotFoundException;
 import com.edstrom.SpringDataMember.repository.AddressRepository;
 import com.edstrom.SpringDataMember.security.AppUser;
 import com.edstrom.SpringDataMember.security.Role;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;

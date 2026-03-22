@@ -4,31 +4,24 @@ import com.edstrom.SpringDataMember.dto.MemberCreateDto;
 import com.edstrom.SpringDataMember.dto.MemberDto;
 import com.edstrom.SpringDataMember.dto.MemberPatchDto;
 import com.edstrom.SpringDataMember.dto.MemberUpdateDto;
-import com.edstrom.SpringDataMember.entity.Address;
 import com.edstrom.SpringDataMember.entity.Member;
-import com.edstrom.SpringDataMember.exception.AddressNotFoundException;
 import com.edstrom.SpringDataMember.exception.MemberNotFoundException;
 import com.edstrom.SpringDataMember.mapper.MemberMapper;
 import com.edstrom.SpringDataMember.repository.AddressRepository;
 import com.edstrom.SpringDataMember.repository.MemberRepository;
-import com.edstrom.SpringDataMember.security.AppUser;
-import com.edstrom.SpringDataMember.security.Role;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserAdminService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
 
-    public UserAdminService(MemberRepository memberRepository, BCryptPasswordEncoder passwordEncoder,
+    public UserAdminService(MemberRepository memberRepository, PasswordEncoder passwordEncoder,
                             AddressRepository addressRepository){
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
